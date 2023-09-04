@@ -1,8 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.LocalDate;
 import java.util.Scanner;
-import java.util.Scanner;
+
+
 
 
 public class Data2 {
@@ -20,8 +20,8 @@ public static boolean VerificarData(String data){
         int mes = Integer.parseInt(partes[1]);
         int ano = Integer.parseInt(partes[2]);
 
-        if(ano < 0 || ano > 9999){
-            System.out.println("ANO INVALIDO");
+        if(ano < 0 || ano > 9999){            System.out.println("ANO INVALIDO");
+
             data = "01/01/1900";
             return false;
         }
@@ -71,29 +71,84 @@ public static boolean VerificarData(String data){
             }
         }
         return false;
-
-
-        
+    
 
  }
+ public static String LerDataArquivo(String filePath)throws FileNotFoundException{
+    File file = new File(filePath);
+    String novaDatamaisrecente = "01/01/1900"; // Data padrão inicial
+    try {
+        Scanner sc = new Scanner(file);
 
-    public static void main(String[] args) throws FileNotFoundException{
-        File file = new File("/Users/1403236/Desktop/arquivos/datas.txt");
-	    Scanner sc = new Scanner(file);
         while (sc.hasNextLine()) {
             String dateString = sc.nextLine();
             String[] dateParts = dateString.split("/");
 
-            int day = Integer.parseInt(dateParts[0]);
-	        int month = Integer.parseInt(dateParts[1]);
-	        int year = Integer.parseInt(dateParts[2]);
-          //continuar aqui
-
-
+            if (dateParts.length == 3) {
+                if (VerificarData(dateString)) {
+                    System.out.println("Data Valida: " + dateString);
+                    if (CompararData(dateString, novaDatamaisrecente)) {
+                        novaDatamaisrecente = dateString;
+                    }
+                } else {
+                    System.out.println("Data invalida");
+                }
+            } else {
+                System.out.println("Formato de data invalido");
+            }
         }
+        sc.close();
+    } catch (FileNotFoundException e) {
+        System.out.println("Arquivo não encontrado: " + e.getMessage());
+    }
+
+    return novaDatamaisrecente;
+}
+public static void lerDataTeclado(String dataMaisRecenteDoArquivo){
+    Scanner teclado = new Scanner(System.in);
+    String novaData = "";
+    System.out.println("Insira uma nova data no formado dd/mm/aaaa ou digite sair para encerrar o programa");
+    while(true){
+        String entrada = teclado.nextLine();
+        if (entrada.equalsIgnoreCase("sair")) {
+            break;
+        }
+        if(VerificarData(entrada)){
+            System.out.println("Data Valida inserida: "+ entrada);
+            if (CompararData(entrada, dataMaisRecenteDoArquivo)) {
+                System.out.println("Insira uma nova data no formado dd/mm/aaaa ou digite sair para encerrar o programa");
+                System.out.println("A nova data inserida é mais recente.");
+                novaData = entrada;
+
+            } else {
+                System.out.println("Insira uma nova data no formado dd/mm/aaaa ou digite sair para encerrar o programa");
+                System.out.println("A nova data inserida não é a mais recente.");
+
+            }
+        }
+      else {
+        System.out.println("Data inválida inserida: " + entrada);
+     }
+    }
+    teclado.close();
+    if (!novaData.isEmpty()) {
+        System.out.println("A data mais recente foi: " + novaData);
+    } else {
+        System.out.println("A data mais recente foi "+ dataMaisRecenteDoArquivo );
+    }
+}
+
+
+    public static void main(String[] args) throws FileNotFoundException{
+        String filePath = "/teste/datas.txt";
+        String dataMaisRecenteDoArquivo = LerDataArquivo(filePath);
+        System.out.println("Atual data mais recente: "+dataMaisRecenteDoArquivo);
+        lerDataTeclado(dataMaisRecenteDoArquivo);
+       
+}
 
 
 
-sc.close();
- }
+
+ 
 }
